@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: com.bill.pro.gui.AddItem2
+SplashScreen-Image: images/splash.gif
