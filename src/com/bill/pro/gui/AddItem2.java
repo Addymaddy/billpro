@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.util.*;
 
 public class AddItem2 {
@@ -27,6 +28,7 @@ public class AddItem2 {
     private JTextField txtState;
     private JTextField txtBuyergstin;
     private JPanel itemInfo;
+    private JButton clearButton;
     InvoiceGenerator invoiceGenerator=new InvoiceGenerator();
 
     public AddItem2() {
@@ -52,6 +54,9 @@ public class AddItem2 {
 
             }
         });
+
+
+
         btnSaveAndGenerateBill.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -92,7 +97,76 @@ public class AddItem2 {
                 buyer[4] = txtBuyergstin.getText();
 
 
-                invoiceGenerator.calculateAndPrint(bill, cgstPercent,sgstPercent,buyer);
+                //Read the invoice number from a file
+                String invoiceNumber = "";
+                String invoiceNumFile = "invoiceNum.txt";
+                File file = new File(invoiceNumFile);
+                BufferedReader br;
+                try {
+                    br = new BufferedReader(new FileReader(file));
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        //process the line
+                        System.out.println("Read value from the file is ---> "+ line.trim());
+                        invoiceNumber = line;
+                    }
+                    br.close();
+
+                }
+                catch(Exception ex ){
+                    System.out.println("Exception Ocurred while reading the file");
+                }
+                finally{
+                }
+
+
+
+                invoiceGenerator.calculateAndPrint(bill, cgstPercent,sgstPercent,buyer, invoiceNumber);
+
+
+                //Write the updated invoice number to a file
+                BufferedWriter bw;
+                try {
+                     bw = new BufferedWriter(new FileWriter(file));
+                    int inv = Integer.parseInt(invoiceNumber);
+                    ++inv;
+                    bw.write(""+inv);
+                    bw.close();
+
+                }
+                catch(Exception ex ){
+                    System.out.println("Exception Occurred while writing the file" + ex);
+                }
+
+            }
+        });
+
+
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //remove all item fomr the list
+                DefaultTableModel model = (DefaultTableModel) table1.getModel();
+                model.getDataVector().removeAllElements();
+                model.fireTableDataChanged(); // notifies the JTable that the model has changed
+
+
+                //Item info clear
+                txtItemName.setText("");
+                txtItemQty.setText("");
+                txtItemPrice.setText("");
+                txtCgst.setText("");
+                txtSgst.setText("");
+
+                //buyer info clear
+                txtBuyerName.setText("");
+                txtAddressLine1.setText("");
+                txtAddressLine2.setText("");
+                txtBuyergstin.setText("");
+                txtCity.setText("");
+                txtState.setText("");
+
+
             }
         });
     }
@@ -106,21 +180,6 @@ public class AddItem2 {
         model.addColumn("Item Name");
         model.addColumn("Item Qty");
         model.addColumn("Item price");
-
-
-//        Vector data = model.getDataVector();
-//        Vector row = (Vector) data.elementAt(1);
-//
-//        int mColIndex = 0;
-//        List colData = new ArrayList(table1.getRowCount());
-//        for (int i = 0; i < table1
-//                .getRowCount(); i++) {
-//            row = (Vector) data.elementAt(i);
-//            colData.add(row.get(mColIndex));
-//        }
-
-        // Append a new column with copied data
-      //  model.addColumn("Col3", colData.toArray());
 
 
     }

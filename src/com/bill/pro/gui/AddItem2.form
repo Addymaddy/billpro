@@ -222,7 +222,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Item Qunatity"/>
+              <text value="Item Quantity"/>
             </properties>
           </component>
           <component id="26fea" class="javax.swing.JTextField" binding="txtItemQty">
@@ -235,6 +235,14 @@
           </component>
         </children>
       </grid>
+      <component id="7a2c0" class="javax.swing.JButton" binding="clearButton" default-binding="true">
+        <constraints>
+          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Clear"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>

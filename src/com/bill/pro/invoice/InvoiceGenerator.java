@@ -114,7 +114,7 @@ public class InvoiceGenerator {
   return file;
  }
 
- public File calculateAndPrint(Map<Item, Integer> bill, double cgstPercent, double sgstPercent, String[] buyer){
+ public File calculateAndPrint(Map<Item, Integer> bill, double cgstPercent, double sgstPercent, String[] buyer, String invoiceNumber){
   double total =0 ;
   double grandTotal=0;
   Set<Item> itemSet = bill.keySet();
@@ -129,10 +129,13 @@ public class InvoiceGenerator {
 
   grandTotal = total + sgst+cgst;
 
-  String pdfName = "bill_"+ LocalDateTime.now() + ".pdf";
+  String arr[] = LocalDateTime.now().toString().split("\\.");
+
+
+  String pdfName = "bill_"+ arr[0].replaceAll(":", "_") + ".pdf";
 
   return createPDF(pdfName, bill, Double.toString(cgst), Double.toString(grandTotal),
-          "dummy_no", Double.toString(sgst), buyer, sgstPercent, cgstPercent);
+          invoiceNumber, Double.toString(sgst), buyer, sgstPercent, cgstPercent);
 
 
  }
@@ -381,12 +384,12 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
    //double price = Double.valueOf(df.format(Math.random() * 10));
    //double extPrice = price * (index+1) ;
    //createContent(cb,498,y,Integer.toString(pair.getKey().getPRICE()),PdfContentByte.ALIGN_RIGHT);
-   createContent(cb,450,y,Double.toString(pair.getKey().getPrice()),PdfContentByte.ALIGN_RIGHT);
+   createContent(cb,455,y,Double.toString(pair.getKey().getPrice()),PdfContentByte.ALIGN_RIGHT);
 
    //createContent(cb,568,y,Integer.toString(pair.getValue()),PdfContentByte.ALIGN_RIGHT);
    createContent(cb,480,y,Integer.toString(pair.getValue()),PdfContentByte.ALIGN_RIGHT);
    
-   createContent(cb,520,y,Double.toString(pair.getKey().getPrice()*pair.getValue()),PdfContentByte.ALIGN_RIGHT);
+   createContent(cb,540,y,Double.toString(pair.getKey().getPrice()*pair.getValue()),PdfContentByte.ALIGN_RIGHT);
 
 
   }
