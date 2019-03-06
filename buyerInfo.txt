@@ -1,0 +1,6 @@
+Ahmed_buyerAddressLine1-Ahmed,buyerAddressLine2-Ahmed,City-Ahmed,State-Ahmed,GSTIN-Ahmed
+Hashmi_buyerAddressLine1-Hashmi,buyerAddressLine2-Hashmi,City-Hashmi,State-Hashmi,GSTIN-Hashmi
+Mohammad Boldiwala_buyerAddressLine1-Boldiwala,buyerAddressLine2-Boldiwala,City-Boldiwala,State-Boldiwala,GSTIN-Boldiwala
+Mohammad sariawala_buyerAddressLine1-sariawala,buyerAddressLine2-sariawala,City-sariawala,State-sariawala,GSTIN-sariawala
+Yusuf_address1-yusuf,address2-yusuf,city-yusuf,,gstin-yusuf
+Juzer_address1-juzer,address2-juzer,city-juzer,state-juzer,gstin-juzer

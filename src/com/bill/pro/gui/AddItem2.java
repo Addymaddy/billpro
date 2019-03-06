@@ -21,7 +21,6 @@ public class AddItem2 {
     private JTextField txtSgst;
     private JButton btnSaveAndGenerateBill;
     private JPanel Buyer;
-    private JTextField txtBuyerName;
     private JTextField txtAddressLine1;
     private JTextField txtAddressLine2;
     private JTextField txtCity;
@@ -29,9 +28,26 @@ public class AddItem2 {
     private JTextField txtBuyergstin;
     private JPanel itemInfo;
     private JButton clearButton;
+    private JComboBox cmbBuyerName;
+    private JButton clearItemButton;
     InvoiceGenerator invoiceGenerator=new InvoiceGenerator();
+    Map<String, String > buyerNamesMap = new HashMap<>();
 
     public AddItem2() {
+
+        //TODO: add a method here to populate the Map from a file on disk
+        populateBuyerMap();
+
+
+       /* String[] buyerNames = {"Ahmed", "Hashmi", "Mohammad Boldiwala", "Mohammad sariawala"};
+
+        buyerNamesMap =  new HashMap<>();
+        buyerNamesMap.put("Ahmed", "buyerAddressLine1-Ahmed,buyerAddressLine2-Ahmed,City-Ahmed,State-Ahmed,GSTIN-Ahmed");
+        buyerNamesMap.put("Hashmi", "buyerAddressLine1-Hashmi,buyerAddressLine2-Hashmi,City-Hashmi,State-Hashmi,GSTIN-Hashmi");
+        buyerNamesMap.put("Mohammad Boldiwala", "buyerAddressLine1-Boldiwala,buyerAddressLine2-Boldiwala,City-Boldiwala,State-Boldiwala,GSTIN-Boldiwala");
+        buyerNamesMap.put("Mohammad sariawala", "buyerAddressLine1-sariawala,buyerAddressLine2-sariawala,City-sariawala,State-sariawala,GSTIN-sariawala");
+*/
+
 
         addItemButton.addActionListener(new ActionListener() {
             @Override
@@ -56,11 +72,10 @@ public class AddItem2 {
         });
 
 
-
         btnSaveAndGenerateBill.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Map<Item,Integer> bill = new HashMap<>();
+                Map<Item,Double> bill = new LinkedHashMap<>();
 
                 DefaultTableModel model = (DefaultTableModel) table1.getModel();
                //Creating item bill
@@ -77,7 +92,7 @@ public class AddItem2 {
                     item.setDescription(itemName);
                     item.setPrice(Double.parseDouble(itemPrice.trim()));
 
-                    bill.put(item, Integer.parseInt(itemQuantity.trim()));
+                    bill.put(item, Double.parseDouble(itemQuantity.trim()));
 
                 }
                 //Item Bill creation
@@ -90,7 +105,7 @@ public class AddItem2 {
                 //Buyer Info
                 String [] buyer = new String [5];
 
-                buyer[0]=txtBuyerName.getText();
+                buyer[0]=(String)cmbBuyerName.getSelectedItem();
                 buyer[1]=txtAddressLine1.getText();
                 buyer[2]=txtAddressLine2.getText();
                 buyer[3]=txtCity.getText() + "   " +txtState.getText();
@@ -116,12 +131,14 @@ public class AddItem2 {
                 catch(Exception ex ){
                     System.out.println("Exception Ocurred while reading the file");
                 }
-                finally{
-                }
 
 
 
                 invoiceGenerator.calculateAndPrint(bill, cgstPercent,sgstPercent,buyer, invoiceNumber);
+
+
+                //Saving and Adding the buyer profile
+                checkAndSaveBuyerName(buyer);
 
 
                 //Write the updated invoice number to a file
@@ -132,13 +149,14 @@ public class AddItem2 {
                     ++inv;
                     bw.write(""+inv);
                     bw.close();
-
                 }
                 catch(Exception ex ){
                     System.out.println("Exception Occurred while writing the file" + ex);
                 }
 
             }
+
+
         });
 
 
@@ -159,7 +177,7 @@ public class AddItem2 {
                 txtSgst.setText("");
 
                 //buyer info clear
-                txtBuyerName.setText("");
+                cmbBuyerName.removeAllItems();
                 txtAddressLine1.setText("");
                 txtAddressLine2.setText("");
                 txtBuyergstin.setText("");
@@ -169,6 +187,96 @@ public class AddItem2 {
 
             }
         });
+
+
+        cmbBuyerName.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String command  = e.getActionCommand();
+
+                System.out.println("Command is --->" + command);
+
+                switch (command) {
+
+                    case "comboBoxChanged":{
+
+
+                        System.out.println("Command" + e.getActionCommand());
+                        String inputText = (String) cmbBuyerName.getSelectedItem();
+                        if(null == inputText || inputText.isEmpty())
+                            return;
+
+                        System.out.println(cmbBuyerName.getSelectedItem());
+
+                        for (String str : buyerNamesMap.keySet()) {
+                            if (((DefaultComboBoxModel) cmbBuyerName.getModel()).getIndexOf(str) == -1) {
+                                if (str.toLowerCase().contains(inputText.toLowerCase()))
+                                    cmbBuyerName.addItem(str);
+                            }
+
+                        }
+                        break;
+                }
+                    case "comboBoxEdited":{
+
+
+                        System.out.println("Inside the box changed command");
+                        String selectedText = (String)cmbBuyerName.getSelectedItem();
+                        if(selectedText==null || selectedText.isEmpty())
+                            return;
+                        //Add the code here to populate other text boxes based on the mapping of cmbBuyerName.getSelectedItem
+                        String textBoxValues = buyerNamesMap.get(selectedText);
+                        if(textBoxValues!=null && !textBoxValues.isEmpty()){
+                            //Fill the text boxes with the values :
+                            String[] arr = textBoxValues.split(",");
+                            txtAddressLine1.setText(arr[0]);
+                            txtAddressLine2.setText(arr[1]);
+                            txtCity.setText(arr[2]);
+                            txtState.setText(arr[3]);
+                            txtBuyergstin.setText(arr[4]);
+                        }
+
+                    }
+
+                }
+
+            }
+        });
+
+        //Clear item action listener
+        clearItemButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model = (DefaultTableModel) table1.getModel();
+                model.removeRow(table1.getSelectedRow());
+            }
+        });
+    }
+
+    private void populateBuyerMap() {
+        System.out.println("*******Populate Buyer Map Method called******");
+
+        String fileName = "buyerInfo.txt";
+
+        File file = new File(fileName);
+        BufferedReader br;
+        try {
+            br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null) {
+                //process the line
+                System.out.println("Read value from the file is ---> "+ line.trim());
+                String arr[] = line.split("_");
+                buyerNamesMap.put(arr[0], arr[1]);
+            }
+            br.close();
+
+        }
+        catch(Exception ex ){
+            System.out.println("Exception Ocurred while reading the saved buyerProfiles from disk");
+        }
+
     }
 
     private void createUIComponents() {
@@ -181,6 +289,43 @@ public class AddItem2 {
         model.addColumn("Item Qty");
         model.addColumn("Item price");
 
+
+    }
+
+
+    private void checkAndSaveBuyerName(String[] buyerInfo) {
+
+        if(buyerNamesMap.containsKey(buyerInfo[0]))
+            return;
+
+        String fileName = "buyerInfo.txt";
+        File file = new File(fileName);
+
+        BufferedWriter bw;
+        try {
+            bw = new BufferedWriter(new FileWriter(file, true));
+            String buyerName = buyerInfo[0];
+            String buyerAddress1 = buyerInfo[1];
+            String buyerAddress2 = buyerInfo[2];
+            String[] cityState = buyerInfo[3].split("   ");
+            String buyerCity = cityState[0];
+            String buyerState = cityState[1];
+
+            System.out.println("Saving ---> buyer City"+ buyerCity);
+            System.out.println("Saving ---> buyer State"+ buyerState);
+
+
+            String buyerGstin = buyerInfo[4];
+            String entry = buyerInfo[0] + "_"+buyerAddress1+","+buyerAddress2+","+buyerCity+","+buyerState+","+buyerGstin;
+            bw.write(entry+"\n");
+            bw.close();
+
+            //Adding the saved buyer to the map as well
+            buyerNamesMap.put(buyerName, entry);
+        }
+        catch(Exception ex ){
+            System.out.println("Exception Occurred while writing to the buyer profile file to the disk" + ex);
+        }
 
     }
 

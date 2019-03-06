@@ -114,7 +114,7 @@ public class InvoiceGenerator {
   return file;
  }
 
- public File calculateAndPrint(Map<Item, Integer> bill, double cgstPercent, double sgstPercent, String[] buyer, String invoiceNumber){
+ public File calculateAndPrint(Map<Item, Double> bill, double cgstPercent, double sgstPercent, String[] buyer, String invoiceNumber){
   double total =0 ;
   double grandTotal=0;
   Set<Item> itemSet = bill.keySet();
@@ -141,7 +141,7 @@ public class InvoiceGenerator {
  }
 
 
- public  File createPDF (String pdfFilename, Map<Item,Integer> Bill,String cgst,String total,
+ public  File createPDF (String pdfFilename, Map<Item,Double> Bill,String cgst,String total,
                          String invoiceNumber,String sgst, String[] buyer, double sgstPercent, double cgstPercent){
 
   Document doc = new Document();
@@ -168,7 +168,7 @@ public class InvoiceGenerator {
    Iterator itr=Bill.entrySet().iterator();
    int count=1;
    while(itr.hasNext()){//for Starts here 
-	Map.Entry<Item, Integer> pair=(Map.Entry<Item, Integer>) itr.next();
+	Map.Entry<Item, Double> pair=(Map.Entry<Item, Double>) itr.next();
     if(beginPage){
      beginPage = false;
      generateLayout(doc, cb, buyer);
@@ -230,21 +230,38 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
 	final LineSeparator lineSeparator = new LineSeparator();
 	   lineSeparator.drawLine(cb, 20, 570, y);
 	   y=y-15;
-	   
-	   cb.setFontAndSize(bfBold, 8);
+
+       Double dblTotal = Double.parseDouble(total);
+       Double dblSgst = Double.parseDouble(sgst);
+       Double dblCgst = Double.parseDouble(cgst);
+
+       DecimalFormat df = new DecimalFormat("#######.##");
+
+
+       //Add the disclaimer
+       cb.setFontAndSize(bf, 2);
+      createContent(cb,25,y,"I/We hereby certify that my/our registeration certificate under the GST act, 2017 is in force of the data on which",PdfContentByte.ALIGN_LEFT);
+      createContent(cb,25,y-10,"the sale of the goods specified in this \"Tax Invoice\" is made by me/us and that the transaction of sale covered by",PdfContentByte.ALIGN_LEFT);
+      createContent(cb,25,y-20,"this \"Tax Invoice\" has been affected by me/us & it shall be accounted for in the turnover of sales while filing of",PdfContentByte.ALIGN_LEFT);
+      createContent(cb,25,y-30,"return and the due tax, if any payable on the sale has been paid or shall be paid.",PdfContentByte.ALIGN_LEFT);
+
+
+
+       cb.setFontAndSize(bfBold, 8);
 	   createContent(cb,498,y,"SGST @ "+sgstPercent+"%:",PdfContentByte.ALIGN_RIGHT);
-	   createContent(cb,568,y,sgst,PdfContentByte.ALIGN_RIGHT);
+	   createContent(cb,568,y,df.format(dblSgst),PdfContentByte.ALIGN_RIGHT);
 	   //printing the service charge
 	   y=y-15;
 	   createContent(cb,498,y,"CGST @ "+cgstPercent+"%:",PdfContentByte.ALIGN_RIGHT);
-	   createContent(cb,568,y,cgst,PdfContentByte.ALIGN_RIGHT);
+	   createContent(cb,568,y,df.format(dblCgst),PdfContentByte.ALIGN_RIGHT);
 			   
 			 
 	   
-	   
+
+
 	   y=y-15;
 	   createContent(cb,498,y,"TOTAL :",PdfContentByte.ALIGN_RIGHT);
-	   createContent(cb,568,y,total,PdfContentByte.ALIGN_RIGHT);
+	   createContent(cb,568,y, df.format(dblTotal) ,PdfContentByte.ALIGN_RIGHT);
 	   
 }
 
@@ -273,10 +290,12 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
 
    //Giving   party Address
    //createHeadings(cb,22,753,"Seller");
-   createHeadings(cb,22,753,"ABC Company", 14);
-   createContent(cb,22,733,"SV Road , Goregaon",10);
-   createContent(cb,22,723,"Mumbai", 10);
-   createHeadings(cb,22,693,"GST no. 123435XXXXX");
+   createHeadings(cb,22,753,"N. Pithawala & Bros", 14);
+   createContent(cb,22,733,"Dealers in: All Kinds of Iron and Steel",10);
+   createContent(cb,22,723,"840/841, Bhawani Peth, Near Bharat Talkies", 10);
+   createContent(cb,22,713,"Pune - 411042", 10);
+
+   createHeadings(cb,22,693,"Email: pithawalaa@yahoo.in");
 
    //Taker party address
    createHeadings(cb,222,753,"Buyer:");
@@ -290,7 +309,7 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
 
 
    // Invoice Header box Text Headings 
-   createHeadings(cb,422,743,"Account No.");
+   createHeadings(cb,422,743,"GSTIN.");
    createHeadings(cb,422,723,"Invoice No.");
    createHeadings(cb,422,703,"Invoice Date");
 
@@ -298,13 +317,11 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
    cb.rectangle(20,50,550,600);
    cb.moveTo(20,630);
    cb.lineTo(570,630);
-   cb.moveTo(50,50);
+   cb.moveTo(50,105);  // Changed y from 50 to 105 to accomodate the disclaimer
    cb.lineTo(50,650);
-   cb.moveTo(150,50);
+   cb.moveTo(150,105); // Changed y from 50 to 105 to accomodate the disclaimer
    cb.lineTo(150,650);
-   
-  
-   
+
    cb.moveTo(430,50);
    cb.lineTo(430,650);
    
@@ -346,12 +363,6 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
 
   try {
 
-  /* createHeadings(cb,200,750,"ABC CORP");
-   createHeadings(cb,200,735,"233 Wanowrie ");
-   createHeadings(cb,200,720,"Hadapsar");
-   createHeadings(cb,200,705,"Pune,M.H-411013");
-   createHeadings(cb,200,690,"India");*/
-
    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
 
 
@@ -360,7 +371,7 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
 
    
    
-   createHeadings(cb,482,743,"ABC0001");
+   createHeadings(cb,482,743,"27ABQPP3776M1ZO");
    createHeadings(cb,482,723,invoiceNumber);
    createHeadings(cb,482,703,dateFormat.format(cal.getTime()));
 
@@ -372,7 +383,7 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
 
  }
  
- private void generateDetail(Document doc, PdfContentByte cb, int y,Map.Entry<Item,Integer> pair,int serialno)  {
+ private void generateDetail(Document doc, PdfContentByte cb, int y,Map.Entry<Item,Double> pair,int serialno)  {
   DecimalFormat df = new DecimalFormat("0.00");
   
   try {
@@ -387,7 +398,7 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
    createContent(cb,455,y,Double.toString(pair.getKey().getPrice()),PdfContentByte.ALIGN_RIGHT);
 
    //createContent(cb,568,y,Integer.toString(pair.getValue()),PdfContentByte.ALIGN_RIGHT);
-   createContent(cb,480,y,Integer.toString(pair.getValue()),PdfContentByte.ALIGN_RIGHT);
+   createContent(cb,495,y,Double.toString(pair.getValue()),PdfContentByte.ALIGN_RIGHT);
    
    createContent(cb,540,y,Double.toString(pair.getKey().getPrice()*pair.getValue()),PdfContentByte.ALIGN_RIGHT);
 
@@ -399,34 +410,8 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
   }
 
  }
- 
- /*private void generateLabourDetail(Document doc,PdfContentByte cb, int y,LabourCharge labour,int serialno){
-	 try {
-
-		   createContent(cb,48,y,Integer.toString(serialno),PdfContentByte.ALIGN_RIGHT);
-		   createContent(cb,52,y,labour.getCode(),PdfContentByte.ALIGN_LEFT);
-		   createContent(cb,152,y,labour.getDescription(),PdfContentByte.ALIGN_LEFT);
-		   
-		   //double price = Double.valueOf(df.format(Math.random() * 10));
-		   //double extPrice = price * (index+1) ;
-		   //createContent(cb,498,y,Integer.toString(pair.getKey().getPRICE()),PdfContentByte.ALIGN_RIGHT);
-		   createContent(cb,450,y,Double.toString(labour.getCharge()),PdfContentByte.ALIGN_RIGHT);
-
-		   //createContent(cb,568,y,Integer.toString(pair.getValue()),PdfContentByte.ALIGN_RIGHT);
-		   createContent(cb,480,y,"-",PdfContentByte.ALIGN_RIGHT);
-		   
-		   createContent(cb,520,y,Double.toString(labour.getCharge()),PdfContentByte.ALIGN_RIGHT);
 
 
-		  }
-
-		  catch (Exception ex){
-		   ex.printStackTrace();
-		  }
- }*/
- 
- 
- 
 
  private void createHeadings(PdfContentByte cb, float x, float y, String text){
 
@@ -500,3 +485,10 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
  }
 
 }
+
+
+
+//I/We hereby certify that my/our registeration certificate under the GST act, 2017is in force of the data on which the
+//sale of the goods specified in this "Tax Invoice" is made by me/us and that the transaction of sale covered by
+//this "Tax Invoice" has been affected by me/us & it shall be accounted for in the turnover of sales while filing of return
+//and the due tax, if any payable on the sale has been paid or shall be paid.
