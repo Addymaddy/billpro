@@ -191,7 +191,7 @@ public class InvoiceGenerator {
    //generateLabourDetail(doc,cb,y,null,count);
    
    //printing the total details :
-   y=105;
+   y=155;  //105 to 155
    printBillCalculation(cgst, total,sgst, cb, y, sgstPercent, cgstPercent);
    
    
@@ -262,7 +262,18 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
 	   y=y-15;
 	   createContent(cb,498,y,"TOTAL :",PdfContentByte.ALIGN_RIGHT);
 	   createContent(cb,568,y, df.format(dblTotal) ,PdfContentByte.ALIGN_RIGHT);
-	   
+
+	   y=y-5;
+
+      lineSeparator.drawLine(cb, 430, 570, y);
+      y = y-15;
+
+      createContent(cb,440,y,"For: N. Pithawala & Bros",PdfContentByte.ALIGN_LEFT);
+
+      createContent(cb,568,55,"Proprietor",PdfContentByte.ALIGN_RIGHT);
+
+
+
 }
 
  private void generateLayout(Document doc, PdfContentByte cb, String [] buyer)  {
@@ -317,9 +328,9 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
    cb.rectangle(20,50,550,600);
    cb.moveTo(20,630);
    cb.lineTo(570,630);
-   cb.moveTo(50,105);  // Changed y from 50 to 105 to accomodate the disclaimer
+   cb.moveTo(50,155);  // Changed y from 50 to 105 to accomodate the disclaimer
    cb.lineTo(50,650);
-   cb.moveTo(150,105); // Changed y from 50 to 105 to accomodate the disclaimer
+   cb.moveTo(150,155); // Changed y from 50 to 105 to accomodate the disclaimer
    cb.lineTo(150,650);
 
    cb.moveTo(430,50);
@@ -327,21 +338,21 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
    
    //New Line added
    //cb.moveTo(470, 50);
-   cb.moveTo(470, 105);
+   cb.moveTo(470, 155);
    //cb.lineTo(470, 650);//changed to shorten the length
    cb.lineTo(470, 650);
    
-   cb.moveTo(500,50);
-   cb.lineTo(500,650);
+   cb.moveTo(510,105);  // changed from 50 to 105
+   cb.lineTo(510,650);
    cb.stroke();
 
    // Invoice Detail box Text Headings 
    createHeadings(cb,22,633,"Sr No.");
    createHeadings(cb,52,633,"Item Number");
    createHeadings(cb,152,633,"Item Description");
-   createHeadings(cb,432,633,"Price");
-   createHeadings(cb,472,633,"Qty");
-   createHeadings(cb,502,633,"Total");
+   createHeadings(cb,432,633,"Qty");
+   createHeadings(cb,472,633,"Price");
+   createHeadings(cb,512,633,"Total");
 
    //add the images
    /*URL url = Thread.currentThread().getContextClassLoader().getResource("resources/BOARD_final_curves_resized.png");
@@ -388,6 +399,8 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
   
   try {
 
+
+
    createContent(cb,48,y,Integer.toString(serialno),PdfContentByte.ALIGN_RIGHT);
    createContent(cb,52,y, pair.getKey().getMaterialCode(),PdfContentByte.ALIGN_LEFT);
    createContent(cb,152,y,pair.getKey().getDescription(),PdfContentByte.ALIGN_LEFT);
@@ -395,12 +408,14 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
    //double price = Double.valueOf(df.format(Math.random() * 10));
    //double extPrice = price * (index+1) ;
    //createContent(cb,498,y,Integer.toString(pair.getKey().getPRICE()),PdfContentByte.ALIGN_RIGHT);
-   createContent(cb,455,y,Double.toString(pair.getKey().getPrice()),PdfContentByte.ALIGN_RIGHT);
+  // cb.setFontAndSize(bf, 5);
+   createContent(cb,435,y,df.format(pair.getValue()),PdfContentByte.ALIGN_LEFT);
+
+   createContent(cb,473,y,df.format(pair.getKey().getPrice()),PdfContentByte.ALIGN_LEFT);     //432/472
 
    //createContent(cb,568,y,Integer.toString(pair.getValue()),PdfContentByte.ALIGN_RIGHT);
-   createContent(cb,495,y,Double.toString(pair.getValue()),PdfContentByte.ALIGN_RIGHT);
-   
-   createContent(cb,540,y,Double.toString(pair.getKey().getPrice()*pair.getValue()),PdfContentByte.ALIGN_RIGHT);
+
+   createContent(cb,515,y,df.format(pair.getKey().getPrice()*pair.getValue()),PdfContentByte.ALIGN_LEFT);
 
 
   }
