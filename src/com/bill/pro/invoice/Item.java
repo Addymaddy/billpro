@@ -5,6 +5,17 @@ public class Item {
     String materialCode;
     String description;
     Double price;
+    String hsnCode;
+
+    public String getHsnCode() {
+        return hsnCode;
+    }
+
+    public void setHsnCode(String hsnCode) {
+        this.hsnCode = hsnCode;
+    }
+
+
 
     public String getMaterialCode() {
         return materialCode;

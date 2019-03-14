@@ -245,6 +245,16 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
       createContent(cb,25,y-20,"this \"Tax Invoice\" has been affected by me/us & it shall be accounted for in the turnover of sales while filing of",PdfContentByte.ALIGN_LEFT);
       createContent(cb,25,y-30,"return and the due tax, if any payable on the sale has been paid or shall be paid.",PdfContentByte.ALIGN_LEFT);
 
+      lineSeparator.drawLine(cb, 20, 430, y-35);
+
+
+     createContent(cb,25,y-50,"BANK DETAILS",PdfContentByte.ALIGN_LEFT);
+     createContent(cb,25,y-60,"CITI BANK",PdfContentByte.ALIGN_LEFT);
+     createContent(cb,25,y-70,"A/C NO.: 0611606702  BRANCH: PUNE",PdfContentByte.ALIGN_LEFT);
+     createContent(cb,25,y-80,"IIFSC CODE: CITI0000005",PdfContentByte.ALIGN_LEFT);
+
+
+
 
 
        cb.setFontAndSize(bfBold, 8);
@@ -301,7 +311,7 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
 
    //Giving   party Address
    //createHeadings(cb,22,753,"Seller");
-   createHeadings(cb,22,753,"N. Pithawala & Bros", 14);
+   createHeadings(cb,22,753,"N. PITHAWALA & BROS", 14);
    createContent(cb,22,733,"Dealers in: All Kinds of Iron and Steel",10);
    createContent(cb,22,723,"840/841, Bhawani Peth, Near Bharat Talkies", 10);
    createContent(cb,22,713,"Pune - 411042", 10);
@@ -333,6 +343,10 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
    cb.moveTo(150,155); // Changed y from 50 to 105 to accomodate the disclaimer
    cb.lineTo(150,650);
 
+   //HSC Code Line
+   cb.moveTo(380,155);
+   cb.lineTo(380,650);
+
    cb.moveTo(430,50);
    cb.lineTo(430,650);
    
@@ -350,6 +364,7 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
    createHeadings(cb,22,633,"Sr No.");
    createHeadings(cb,52,633,"Item Number");
    createHeadings(cb,152,633,"Item Description");
+   createHeadings(cb,382,633,"HSN Code");
    createHeadings(cb,432,633,"Qty");
    createHeadings(cb,472,633,"Price");
    createHeadings(cb,512,633,"Total");
@@ -409,6 +424,7 @@ private void printBillCalculation(String sgst, String total, String cgst,PdfCont
    //double extPrice = price * (index+1) ;
    //createContent(cb,498,y,Integer.toString(pair.getKey().getPRICE()),PdfContentByte.ALIGN_RIGHT);
   // cb.setFontAndSize(bf, 5);
+   createContent(cb,385,y,pair.getKey().getHsnCode(),PdfContentByte.ALIGN_LEFT);
    createContent(cb,435,y,df.format(pair.getValue()),PdfContentByte.ALIGN_LEFT);
 
    createContent(cb,473,y,df.format(pair.getKey().getPrice()),PdfContentByte.ALIGN_LEFT);     //432/472

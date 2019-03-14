@@ -30,6 +30,7 @@ public class AddItem2 {
     private JButton clearButton;
     private JComboBox cmbBuyerName;
     private JButton clearItemButton;
+    private JTextField txtHSNCode;
     InvoiceGenerator invoiceGenerator=new InvoiceGenerator();
     Map<String, String > buyerNamesMap = new HashMap<>();
 
@@ -39,16 +40,6 @@ public class AddItem2 {
         populateBuyerMap();
 
 
-       /* String[] buyerNames = {"Ahmed", "Hashmi", "Mohammad Boldiwala", "Mohammad sariawala"};
-
-        buyerNamesMap =  new HashMap<>();
-        buyerNamesMap.put("Ahmed", "buyerAddressLine1-Ahmed,buyerAddressLine2-Ahmed,City-Ahmed,State-Ahmed,GSTIN-Ahmed");
-        buyerNamesMap.put("Hashmi", "buyerAddressLine1-Hashmi,buyerAddressLine2-Hashmi,City-Hashmi,State-Hashmi,GSTIN-Hashmi");
-        buyerNamesMap.put("Mohammad Boldiwala", "buyerAddressLine1-Boldiwala,buyerAddressLine2-Boldiwala,City-Boldiwala,State-Boldiwala,GSTIN-Boldiwala");
-        buyerNamesMap.put("Mohammad sariawala", "buyerAddressLine1-sariawala,buyerAddressLine2-sariawala,City-sariawala,State-sariawala,GSTIN-sariawala");
-*/
-
-
         addItemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -56,9 +47,10 @@ public class AddItem2 {
                 String itemName = txtItemName.getText();
                 String itemQty =  txtItemQty.getText();
                 String itemPrice = txtItemPrice.getText();
+                String hsnCode = txtHSNCode.getText();
 
                 if( !itemName.isEmpty() && !itemQty.isEmpty() && !itemPrice.isEmpty())
-                model.addRow(new Object[] { txtItemName.getText(), txtItemQty.getText(), txtItemPrice.getText() });
+                model.addRow(new Object[] { txtItemName.getText(),hsnCode, txtItemQty.getText(), txtItemPrice.getText() });
                 else if (itemName.isEmpty())
                     JOptionPane.showMessageDialog(null, "Please Enter Item Name");
                 else if (itemQty.isEmpty())
@@ -82,15 +74,17 @@ public class AddItem2 {
                 for(int i=0;i<model.getRowCount();i++){
                     String itemName = (String) model.getValueAt(i,0);
                     System.out.println("Value of itemName is -->" + itemName);
-                    String itemQuantity = (String) model.getValueAt(i,1);
+                    String itemQuantity = (String) model.getValueAt(i,2);
                     System.out.println("Value of itemQuntity is -->" + itemQuantity);
-                    String itemPrice = (String) model.getValueAt(i,2);
+                    String itemPrice = (String) model.getValueAt(i,3);
                     System.out.println("Value of itemPrice is -->" + itemPrice);
+                    String hsnCode = (String)model.getValueAt(i,1);
 
                     Item item = new Item();
                     item.setMaterialCode(itemName);
                     item.setDescription(itemName);
                     item.setPrice(Double.parseDouble(itemPrice.trim()));
+                    item.setHsnCode(hsnCode);
 
                     bill.put(item, Double.parseDouble(itemQuantity.trim()));
 
@@ -100,6 +94,7 @@ public class AddItem2 {
                 //GST Info
                 double cgstPercent = Double.parseDouble(txtCgst.getText().trim());
                 double sgstPercent = Double.parseDouble(txtSgst.getText().trim());
+                String hsnCode = txtHSNCode.getText().trim();
 
 
                 //Buyer Info
@@ -286,6 +281,7 @@ public class AddItem2 {
         table1.setModel(model);
         table1.setVisible(true);
         model.addColumn("Item Name");
+        model.addColumn("HSN Code");
         model.addColumn("Item Qty");
         model.addColumn("Item price");
 
